@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --brand-navy: #001a46;
+  --brand-navy-dark: #00132f;
+  --brand-gold: #c89b3c;
+  --brand-gold-light: #e0b85a;
+  --brand-white: #ffffff;
+  --brand-offwhite: #f8f8f6;
+  --brand-neutral: #f3f4f6;
+  --brand-muted: #64748b;
+  --brand-border: #e5e7eb;
+  --brand-surface: #ffffff;
+  --background: var(--brand-offwhite);
+  --foreground: var(--brand-navy-dark);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-manrope);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  color: var(--brand-navy);
+  letter-spacing: -0.03em;
+}
+
+p,
+span,
+label,
+input,
+select,
+textarea,
+button,
+a {
+  font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: rgba(200, 155, 60, 0.22);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.brand-section-kicker {
+  color: var(--brand-gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.brand-divider {
+  position: relative;
+  display: inline-block;
+}
+
+.brand-divider::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin-top: 0.65rem;
+  background: linear-gradient(90deg, var(--brand-gold) 0%, rgba(200, 155, 60, 0.25) 100%);
+}
