@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { savePropertyAction } from "@/lib/admin-actions";
-import { createBrowserSupabaseClient } from "@/lib/supabase-browser";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 type GalleryImage = {
   id: string;
@@ -57,7 +57,7 @@ export function PropertyForm({
   const [isAdminAuthorized, setIsAdminAuthorized] = useState(false);
 
   useEffect(() => {
-    const supabase = createBrowserSupabaseClient();
+    const supabase = supabaseBrowser;
 
     if (!supabase) {
       setAuthStateReady(true);
@@ -135,7 +135,7 @@ export function PropertyForm({
       return;
     }
 
-    const supabase = createBrowserSupabaseClient();
+    const supabase = supabaseBrowser;
 
     if (!supabase) {
       setUploadError("Supabase is not configured. Add your public URL and publishable key to enable image uploads.");
@@ -154,17 +154,27 @@ export function PropertyForm({
     setUploadError(null);
 
     try {
+      let session = null as Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"] | null;
+
       if (!authStateReady) {
         const {
-          data: { session },
+          data: sessionData,
           error: sessionError,
         } = await supabase.auth.getSession();
+
+        session = sessionData.session;
 
         if (sessionError) {
           console.warn("[Property upload auth] getSession failed while waiting for auth state", { errorMessage: sessionError.message });
         }
 
         if (!session?.user) {
+          console.log("[ADMIN UPLOAD AUTH]", {
+            hasSession: false,
+            userId: null,
+            email: null,
+            isAdmin: false,
+          });
           setUploadError("Waiting for your authenticated admin session to initialize...");
           return;
         }
@@ -189,7 +199,16 @@ export function PropertyForm({
         .select("id, role")
         .eq("id", user.id)
         .eq("role", "admin")
-        .maybeSingle();
+        .maybeSingle<{ id: string; role: string }>();
+
+      const { data: isAdmin, error: adminCheckError } = await supabase.rpc("is_admin");
+
+      console.log("[ADMIN UPLOAD AUTH]", {
+        hasSession: !!session,
+        userId: user?.id ?? null,
+        email: user?.email ?? null,
+        isAdmin: Boolean(isAdmin),
+      });
 
       if (adminProfileError || !adminProfile) {
         console.warn("[Property upload auth] admin profile lookup failed", {
@@ -198,8 +217,6 @@ export function PropertyForm({
         });
         throw new Error("You must be signed in as an authenticated admin before uploading images.");
       }
-
-      const { data: isAdmin, error: adminCheckError } = await supabase.rpc("is_admin");
 
       if (adminCheckError || !isAdmin) {
         console.warn("[Property upload auth] is_admin RPC check failed", {
