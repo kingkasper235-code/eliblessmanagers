@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 import { getSupabaseConfig } from "@/lib/supabase";
 
@@ -10,13 +10,7 @@ function getOrCreateBrowserClient() {
   }
 
   if (!globalThis.__eliblessSupabaseBrowserClient) {
-    globalThis.__eliblessSupabaseBrowserClient = createClient(config.url, config.key, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    });
+    globalThis.__eliblessSupabaseBrowserClient = createBrowserClient(config.url, config.key);
   }
 
   return globalThis.__eliblessSupabaseBrowserClient;
@@ -29,5 +23,5 @@ export function createBrowserSupabaseClient() {
 export const supabaseBrowser = getOrCreateBrowserClient();
 
 declare global {
-  var __eliblessSupabaseBrowserClient: ReturnType<typeof createClient> | undefined;
+  var __eliblessSupabaseBrowserClient: ReturnType<typeof createBrowserClient> | undefined;
 }
