@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { type AuthChangeEvent, type Session } from "@supabase/supabase-js";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { savePropertyAction } from "@/lib/admin-actions";
@@ -96,7 +97,7 @@ export function PropertyForm({
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       if (!active) {
         return;
       }
@@ -199,7 +200,7 @@ export function PropertyForm({
         .select("id, role")
         .eq("id", user.id)
         .eq("role", "admin")
-        .maybeSingle<{ id: string; role: string }>();
+        .maybeSingle();
 
       const { data: isAdmin, error: adminCheckError } = await supabase.rpc("is_admin");
 
