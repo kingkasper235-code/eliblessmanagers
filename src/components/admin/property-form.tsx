@@ -13,6 +13,19 @@ type GalleryImage = {
   is_primary: boolean;
 };
 
+function buildPropertyStoragePath(propertyId: string | number, fileName: string) {
+  const safePropertyId = String(propertyId ?? "").trim();
+
+  if (!safePropertyId || safePropertyId === "undefined" || safePropertyId === "null") {
+    throw new Error("Save the property first before uploading images so the file can be stored under properties/{propertyId}/.");
+  }
+
+  const baseName = fileName.replace(/[^a-zA-Z0-9._-]/g, "-").toLowerCase();
+  const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+  return `properties/${safePropertyId}/${uniqueSuffix}-${baseName}`;
+}
+
 function normalizeGalleryImages(defaultValues?: Record<string, unknown>) {
   const gallery = Array.isArray((defaultValues as { property_images?: Array<Record<string, unknown>> } | undefined)?.property_images)
     ? ((defaultValues as { property_images?: Array<Record<string, unknown>> }).property_images ?? [])
@@ -63,25 +76,55 @@ export function PropertyForm({
       return;
     }
 
+    const propertyId = typeof values.id === "string" || typeof values.id === "number" ? values.id : undefined;
+
+    if (!propertyId) {
+      setUploadError("Save the property first before uploading images so the file is stored under properties/{propertyId}/.");
+      event.target.value = "";
+      return;
+    }
+
     setUploading(true);
     setUploadError(null);
 
     try {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user) {
+        throw new Error("You must be signed in as an authenticated admin before uploading images.");
+      }
+
       const uploadedImages = await Promise.all(
         files.map(async (file) => {
-          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").toLowerCase();
-          const storagePath = `properties/${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+          const bucketName = "property-images";
+          const storagePath = buildPropertyStoragePath(propertyId, file.name);
 
-          const { data, error } = await supabase.storage.from("property-images").upload(storagePath, file, {
+          console.error("[Property image upload debug]", {
+            userId: session.user.id,
+            bucketName,
+            storagePath,
+            fileName: file.name,
+          });
+
+          const { data, error } = await supabase.storage.from(bucketName).upload(storagePath, file, {
             cacheControl: "3600",
             upsert: false,
           });
 
           if (error || !data) {
+            console.error("[Property image upload failed]", {
+              userId: session.user.id,
+              bucketName,
+              storagePath,
+              errorMessage: error?.message ?? "Unable to upload image.",
+            });
             throw new Error(error?.message ?? "Unable to upload image.");
           }
 
-          const publicUrl = supabase.storage.from("property-images").getPublicUrl(data.path).data.publicUrl;
+          const publicUrl = supabase.storage.from(bucketName).getPublicUrl(data.path).data.publicUrl;
 
           return {
             id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,

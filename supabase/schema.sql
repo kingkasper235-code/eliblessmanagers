@@ -192,14 +192,37 @@ for all
 using (public.is_admin())
 with check (public.is_admin());
 
-create policy "Admins can manage storage bucket"
+drop policy if exists "Admins can manage storage bucket" on storage.objects;
+drop policy if exists "Public can view property images in storage" on storage.objects;
+
+create policy "Admins can upload property images"
 on storage.objects
-for all
+for insert
+with check (
+  bucket_id = 'property-images'
+  and public.is_admin()
+  and (storage.foldername(name))[1] = 'properties'
+);
+
+create policy "Admins can update property images"
+on storage.objects
+for update
 using (
-  bucket_id = 'property-images' and public.is_admin()
+  bucket_id = 'property-images'
+  and public.is_admin()
 )
 with check (
-  bucket_id = 'property-images' and public.is_admin()
+  bucket_id = 'property-images'
+  and public.is_admin()
+  and (storage.foldername(name))[1] = 'properties'
+);
+
+create policy "Admins can delete property images"
+on storage.objects
+for delete
+using (
+  bucket_id = 'property-images'
+  and public.is_admin()
 );
 
 create policy "Public can view property images in storage"
