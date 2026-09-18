@@ -37,7 +37,7 @@ export async function loginAction(
   const supabase = await createServerSupabaseClient();
 
   if (!supabase) {
-    return { error: "Supabase is not configured. Add your project URL and anon key." };
+    return { error: "Supabase is not configured. Add your project URL and publishable key." };
   }
 
   const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
@@ -247,9 +247,9 @@ export async function savePropertyAction(formData: FormData) {
   await supabase.from("property_amenities").delete().eq("property_id", propertyIdNumber);
 
   if (amenities.length) {
-    const insertRows = amenities.map((name) => ({
+    const insertRows = amenities.map((amenity) => ({
       property_id: propertyIdNumber,
-      name,
+      amenity,
     }));
 
     const { error: amenityError } = await supabase.from("property_amenities").insert(insertRows);

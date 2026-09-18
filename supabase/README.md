@@ -28,10 +28,10 @@ cp .env.example .env.local
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-public-key
 ```
 
-Do not expose the service-role key in frontend code.
+Do not expose the service-role key in frontend code. Use the public/publishable key only.
 
 ## 4. RLS and admin access
 

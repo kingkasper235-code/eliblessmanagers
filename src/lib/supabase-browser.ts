@@ -1,14 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 
-export function createBrowserSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { getSupabaseConfig } from "@/lib/supabase";
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+export function createBrowserSupabaseClient() {
+  const config = getSupabaseConfig();
+
+  if (!config) {
     return null;
   }
 
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  return createClient(config.url, config.key, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,

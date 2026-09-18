@@ -39,7 +39,7 @@ export type DbProperty = {
   created_at: string | null;
   updated_at: string | null;
   property_images?: Array<{ image_url: string; display_order: number }> | null;
-  property_amenities?: Array<{ name: string }> | null;
+  property_amenities?: Array<{ amenity?: string | null; name?: string | null }> | null;
 };
 
 export type Property = {
@@ -97,8 +97,8 @@ function normalizeProperty(record: DbProperty): Property {
     .filter(Boolean);
 
   const features = (record.property_amenities ?? [])
-    .map((item) => item.name)
-    .filter(Boolean);
+    .map((item) => (item.amenity ?? item.name ?? "").trim())
+    .filter((value): value is string => Boolean(value));
 
   const propertySize = Number(record.property_size ?? 0);
 
@@ -150,7 +150,7 @@ async function fetchProperties({
   try {
     let query = supabase
       .from("properties")
-      .select("*, property_images(image_url, display_order), property_amenities(name)")
+      .select("*, property_images(image_url, display_order), property_amenities(amenity)")
       .eq("published", true)
       .order("featured", { ascending: false })
       .order("created_at", { ascending: false });
@@ -256,7 +256,7 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
   try {
     const { data, error } = await supabase
       .from("properties")
-      .select("*, property_images(image_url, display_order), property_amenities(name)")
+      .select("*, property_images(image_url, display_order), property_amenities(amenity)")
       .eq("published", true)
       .eq("slug", slug)
       .maybeSingle();

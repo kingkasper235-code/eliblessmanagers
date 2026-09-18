@@ -56,8 +56,8 @@ Then fill in:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Do not commit `.env.local`, `.env.production`, or any file containing a Supabase service-role key. The app intentionally uses only the public Supabase URL and anon key in the browser. All writes are protected by Supabase RLS and admin pages require authenticated admin access.
+Do not commit `.env.local`, `.env.production`, or any file containing a Supabase service-role key. The app intentionally uses only the public Supabase URL and publishable key in the browser. All writes are protected by Supabase RLS and admin pages require authenticated admin access.

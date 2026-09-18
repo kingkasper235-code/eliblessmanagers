@@ -27,17 +27,24 @@ export async function getAdminDashboardStats() {
       forSale: 0,
       forRent: 0,
       featured: 0,
+      newEnquiries: 0,
       recent: [] as AdminPropertySummary[],
-      error: "Supabase is not configured. Add your project URL and anon key to continue.",
+      error: "Supabase is not configured. Add your project URL and publishable key to continue.",
     };
   }
 
-  const { data, error } = await supabase
-    .from("properties")
-    .select("id, title, slug, location, price, currency, property_type, listing_type, status, published, featured, created_at, property_images(image_url, is_primary, display_order)")
-    .order("created_at", { ascending: false });
+  const [propertiesResult, enquiriesResult] = await Promise.all([
+    supabase
+      .from("properties")
+      .select("id, title, slug, location, price, currency, property_type, listing_type, status, published, featured, created_at, property_images(image_url, is_primary, display_order)")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("enquiries")
+      .select("id", { count: "exact" })
+      .eq("status", "New"),
+  ]);
 
-  if (error) {
+  if (propertiesResult.error) {
     return {
       total: 0,
       published: 0,
@@ -45,12 +52,22 @@ export async function getAdminDashboardStats() {
       forSale: 0,
       forRent: 0,
       featured: 0,
+      newEnquiries: 0,
       recent: [] as AdminPropertySummary[],
-      error: error.message,
+      error: propertiesResult.error.message,
     };
   }
 
-  const properties = data ?? [];
+  const properties = (propertiesResult.data ?? []).map((property) => {
+    const images = Array.isArray(property.property_images) ? property.property_images : [];
+    const primaryImage = images.find((image: { is_primary?: boolean }) => image.is_primary) ?? images[0] ?? null;
+
+    return {
+      ...property,
+      image_url: primaryImage?.image_url ?? null,
+    };
+  });
+
   const stats = {
     total: properties.length,
     published: properties.filter((property) => property.published).length,
@@ -58,6 +75,7 @@ export async function getAdminDashboardStats() {
     forSale: properties.filter((property) => property.listing_type === "sale").length,
     forRent: properties.filter((property) => property.listing_type === "rent").length,
     featured: properties.filter((property) => property.featured).length,
+    newEnquiries: enquiriesResult.error ? 0 : enquiriesResult.count ?? 0,
     recent: properties.slice(0, 5),
     error: null as string | null,
   };
@@ -90,13 +108,13 @@ export async function getAdminPropertiesList({
       total: 0,
       page: 1,
       pageSize,
-      error: "Supabase is not configured. Add your project URL and anon key to continue.",
+      error: "Supabase is not configured. Add your project URL and publishable key to continue.",
     };
   }
 
   let query = supabase
     .from("properties")
-    .select("id, title, slug, location, price, currency, property_type, listing_type, status, published, featured, created_at", {
+    .select("id, title, slug, location, price, currency, property_type, listing_type, status, published, featured, created_at, property_images(image_url, is_primary, display_order)", {
       count: "exact",
     });
 
@@ -138,7 +156,15 @@ export async function getAdminPropertiesList({
     };
   }
 
-  const items = (data ?? []) as AdminPropertySummary[];
+  const items = ((data ?? []) as Array<Record<string, unknown>>).map((property) => {
+    const images = Array.isArray(property.property_images) ? property.property_images : [];
+    const primaryImage = images.find((image: { is_primary?: boolean }) => image.is_primary) ?? images[0] ?? null;
+
+    return {
+      ...(property as AdminPropertySummary),
+      image_url: primaryImage?.image_url ?? null,
+    };
+  }) as AdminPropertySummary[];
 
   return {
     items,
@@ -159,7 +185,7 @@ export async function getAdminPropertyById(propertyId: number) {
   const { data, error } = await supabase
     .from("properties")
     .select(
-      "*, property_images(image_url, display_order), property_amenities(name)",
+      "*, property_images(image_url, display_order), property_amenities(amenity)",
     )
     .eq("id", propertyId)
     .maybeSingle();

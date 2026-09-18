@@ -36,7 +36,7 @@ export async function requireAdmin() {
   const admin = await getAuthenticatedAdmin();
 
   if (!admin) {
-    redirect("/admin/login");
+    redirect("/admin/login?error=Unauthorized");
   }
 
   return admin;

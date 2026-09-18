@@ -4,8 +4,15 @@ import Link from "next/link";
 import { LoginForm } from "@/components/admin/login-form";
 import { redirectIfAdminLoggedIn } from "@/lib/admin";
 
-export default async function AdminLoginPage() {
+export default async function AdminLoginPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ error?: string }>;
+}) {
   await redirectIfAdminLoggedIn();
+
+  const error = (await searchParams)?.error ?? "";
+  const isUnauthorized = error === "Unauthorized";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(200,155,60,0.14),transparent_35%),var(--brand-offwhite)] px-4 py-10">
@@ -24,6 +31,12 @@ export default async function AdminLoginPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--brand-gold)]">Admin Access</p>
           <h1 className="mt-2 text-3xl font-black text-[var(--brand-navy)]">Secure login</h1>
         </div>
+
+        {isUnauthorized ? (
+          <div className="mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            Unauthorized. This account is not registered as an admin in Supabase.
+          </div>
+        ) : null}
 
         <LoginForm />
 

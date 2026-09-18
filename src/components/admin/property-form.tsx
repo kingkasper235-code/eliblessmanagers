@@ -59,7 +59,7 @@ export function PropertyForm({
     const supabase = createBrowserSupabaseClient();
 
     if (!supabase) {
-      setUploadError("Supabase is not configured. Add your public URL and anon key to enable image uploads.");
+      setUploadError("Supabase is not configured. Add your public URL and publishable key to enable image uploads.");
       return;
     }
 
@@ -322,7 +322,10 @@ export function PropertyForm({
             name="amenities"
             defaultValue={String(
               Array.isArray(values.property_amenities)
-                ? values.property_amenities.map((item: { name?: string }) => item.name).join(", ")
+                ? values.property_amenities
+                    .map((item: { amenity?: string; name?: string }) => item.amenity ?? item.name)
+                    .filter(Boolean)
+                    .join(", ")
                 : "",
             )}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"

@@ -13,6 +13,7 @@ export default async function AdminDashboardPage() {
     { label: "For Sale", value: stats.forSale },
     { label: "For Rent", value: stats.forRent },
     { label: "Featured properties", value: stats.featured },
+    { label: "New enquiries", value: stats.newEnquiries },
   ];
 
   return (
