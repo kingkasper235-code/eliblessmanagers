@@ -38,7 +38,7 @@ export type DbProperty = {
   published: boolean | null;
   created_at: string | null;
   updated_at: string | null;
-  property_images?: Array<{ image_url: string; display_order: number }> | null;
+  property_images?: Array<{ image_url: string; display_order?: number | null; is_primary?: boolean | null }> | null;
   property_amenities?: Array<{ amenity?: string | null; name?: string | null }> | null;
 };
 
@@ -92,7 +92,15 @@ function normalizeProperty(record: DbProperty): Property {
   const location = record.location ?? [record.city, record.state].filter(Boolean).join(", ") ?? "Nigeria";
   const gallery = (record.property_images ?? [])
     .slice()
-    .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+    .filter((item) => Boolean(item?.image_url))
+    .sort((a, b) => {
+      const primaryDifference = Number(Boolean(b.is_primary)) - Number(Boolean(a.is_primary));
+      if (primaryDifference !== 0) {
+        return primaryDifference;
+      }
+
+      return (a.display_order ?? 0) - (b.display_order ?? 0);
+    })
     .map((item) => item.image_url)
     .filter(Boolean);
 
@@ -150,7 +158,7 @@ async function fetchProperties({
   try {
     let query = supabase
       .from("properties")
-      .select("*, property_images(image_url, display_order), property_amenities(amenity)")
+      .select("*, property_images(image_url, display_order, is_primary), property_amenities(amenity)")
       .eq("published", true)
       .order("featured", { ascending: false })
       .order("created_at", { ascending: false });
@@ -256,7 +264,7 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
   try {
     const { data, error } = await supabase
       .from("properties")
-      .select("*, property_images(image_url, display_order), property_amenities(amenity)")
+      .select("*, property_images(image_url, display_order, is_primary), property_amenities(amenity)")
       .eq("published", true)
       .eq("slug", slug)
       .maybeSingle();
