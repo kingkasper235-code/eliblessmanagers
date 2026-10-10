@@ -45,6 +45,17 @@ insert into public.admin_profiles (id, full_name)
 values ('<auth-user-uuid>', 'Admin User');
 ```
 
+### Admin password recovery
+
+In **Authentication → URL Configuration**, add these exact redirect URLs (replace the production host with the site's real origin):
+
+```text
+http://localhost:3000/reset-password
+https://your-production-domain/reset-password
+```
+
+The admin login's **Forgot your password?** link sends the recovery email back to `/reset-password`. A valid Supabase recovery session is required to set a new password; after it is updated, the browser session is cleared and the user returns to `/admin/login`. Admin access still requires an `admin_profiles` row with the `admin` role.
+
 ## 5. Data insertion example
 
 ```sql
@@ -99,3 +110,9 @@ Then insert gallery rows and amenities using the related tables.
 The schema creates the `owners` table with two unique slots (`slot_number` 1 and 2). Each profile can be edited in **Admin → Settings**; a profile is public only when it has a name and its **Show publicly** option is enabled. Empty or inactive slots do not appear on the website.
 
 For an existing installation, run `migrations/20261009_owner_profiles.sql` after the base schema. It adds the owner table, admin/public row-level security policies, and admin-only uploads to the existing `property-images` bucket. Do not add sample owner names or photos; fill the two profiles with approved company information.
+
+## 7. Google Business widget settings
+
+For a new installation, `schema.sql` creates and seeds the singleton `google_business_settings` row. For an existing installation, run `migrations/20261010_google_business_settings.sql` after the base schema; it creates the default listing URL (`https://maps.app.goo.gl/4aRcQcEtzcHtt8878`), turns the widget on, and leaves live data off. The public roles can read the non-secret settings; only authenticated users accepted by `public.is_admin()` can insert or update them.
+
+Configure `GOOGLE_PLACES_API_KEY` only in the server environment (for example, the deployment platform or local `.env.local`). Do not use a `NEXT_PUBLIC_` prefix. Add the verified Place ID and listing URL in **Admin → Settings**. Saving the live-data option makes a no-store Place Details request with an `id` field mask and enables live data only when Google confirms the exact Place ID. The optional `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY` is a separate, referrer-restricted public Maps Embed key. Neither API key is stored in the table.

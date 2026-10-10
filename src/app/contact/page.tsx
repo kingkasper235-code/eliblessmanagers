@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { Footer } from "@/components/footer";
+import {
+  GoogleBusinessWidget,
+  GoogleBusinessWidgetLoading,
+} from "@/components/google-business-widget";
 import { Navbar } from "@/components/navbar";
 import { submitEnquiryAction } from "@/lib/enquiries";
 
@@ -117,29 +122,9 @@ export default async function ContactPage({
             </section>
           </div>
 
-          <section className="mt-10 border border-[var(--brand-border)] bg-white">
-            <div className="flex flex-col gap-2 border-b border-[var(--brand-border)] px-5 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-6">
-              <div>
-                <p className="brand-section-kicker">Find us</p>
-                <h2 className="mt-1 text-xl font-semibold">Lagos office</h2>
-              </div>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=12+Lekki+Road%2C+Lagos%2C+Nigeria"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-sm font-semibold text-[var(--brand-navy)] underline decoration-[var(--brand-gold)] underline-offset-4 hover:text-[var(--brand-gold)]"
-              >
-                Open in Google Maps ↗
-              </a>
-            </div>
-            <iframe
-              title="Map showing 12 Lekki Road, Lagos, Nigeria"
-              src="https://www.google.com/maps?q=12%20Lekki%20Road%2C%20Lagos%2C%20Nigeria&output=embed"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="h-72 w-full border-0 sm:h-80"
-            />
-          </section>
+          <Suspense fallback={<GoogleBusinessWidgetLoading />}>
+            <GoogleBusinessWidget />
+          </Suspense>
         </div>
       </main>
       <Footer />

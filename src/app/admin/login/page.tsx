@@ -16,12 +16,14 @@ export const metadata: Metadata = {
 export default async function AdminLoginPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; success?: string }>;
 }) {
   await redirectIfAdminLoggedIn();
 
-  const error = (await searchParams)?.error ?? "";
+  const params = await searchParams;
+  const error = params?.error ?? "";
   const isUnauthorized = error === "Unauthorized";
+  const passwordUpdated = params?.success === "password-updated";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(200,155,60,0.14),transparent_35%),var(--brand-offwhite)] px-4 py-10">
@@ -45,6 +47,11 @@ export default async function AdminLoginPage({
           <div className="mb-5 border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             Unauthorized. This account is not registered as an admin in Supabase.
           </div>
+        ) : null}
+        {passwordUpdated ? (
+          <p role="status" className="mb-5 border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-800">
+            Your password has been updated. Sign in with your new password to continue.
+          </p>
         ) : null}
 
         <LoginForm />

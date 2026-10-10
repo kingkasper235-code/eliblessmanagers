@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Link from "next/link";
 
 import { loginAction } from "@/lib/admin-actions";
 
@@ -67,6 +68,14 @@ export function LoginForm() {
       >
         {isPending ? "Signing in..." : "Login"}
       </button>
+      <p className="text-center text-sm">
+        <Link
+          href="/admin/forgot-password"
+          className="font-semibold text-[var(--brand-navy)] underline decoration-[var(--brand-border)] underline-offset-4 transition hover:text-[var(--brand-gold)]"
+        >
+          Forgot your password?
+        </Link>
+      </p>
     </form>
   );
 }
