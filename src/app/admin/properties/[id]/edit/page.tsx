@@ -25,9 +25,9 @@ export default async function EditPropertyPage({
   return (
     <AdminShell title="Edit property" subtitle="Update this property listing" current="Properties">
       {successMessage ? (
-        <div className="mb-6 flex flex-col gap-3 rounded-[24px] border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-6 flex flex-col gap-3 rounded-[24px] border border-[rgba(185,149,85,0.35)] bg-[rgba(185,149,85,0.08)] p-4 text-sm text-[var(--brand-navy)] sm:flex-row sm:items-center sm:justify-between">
           <span>{successMessage}</span>
-          <Link href={`/property/${property.slug}`} className="font-semibold text-emerald-700 hover:text-emerald-800">
+          <Link href={`/property/${property.slug}`} className="font-semibold text-[var(--brand-gold)] hover:text-[var(--brand-navy)]">
             View property
           </Link>
         </div>

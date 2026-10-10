@@ -19,23 +19,23 @@ export default async function AdminDashboardPage() {
   return (
     <AdminShell title="Dashboard" subtitle="Operational overview for your property portfolio" current="Dashboard">
       {stats.error ? (
-        <div className="mb-6 rounded-[24px] border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+        <div className="mb-6 border border-[rgba(200,155,60,0.35)] bg-[rgba(200,155,60,0.08)] p-4 text-sm text-[var(--brand-navy)]">
           {stats.error}
         </div>
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-500">{card.label}</p>
-            <p className="mt-3 text-3xl font-black text-slate-900">{card.value}</p>
+          <div key={card.label} className="border border-[var(--brand-border)] bg-white p-5">
+            <p className="text-sm font-medium text-[var(--brand-muted)]">{card.label}</p>
+            <p className="mt-3 text-3xl font-semibold text-[var(--brand-navy)]">{card.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mt-8 border border-[var(--brand-border)] bg-white p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-black text-slate-900">Recently added properties</h2>
+          <h2 className="text-xl font-semibold text-[var(--brand-navy)]">Recently added properties</h2>
         </div>
 
         {stats.recent.length ? (
@@ -52,11 +52,11 @@ export default async function AdminDashboardPage() {
               <tbody>
                 {stats.recent.map((property) => (
                   <tr key={property.id} className="border-b border-slate-100 align-top">
-                    <td className="py-3 pr-4 font-semibold text-slate-900">{property.title}</td>
-                    <td className="py-3 pr-4 text-slate-600">{property.location ?? "—"}</td>
-                    <td className="py-3 pr-4 text-slate-600">{property.property_type ?? "—"}</td>
+                    <td className="py-3 pr-4 font-semibold text-[var(--brand-navy)]">{property.title}</td>
+                    <td className="py-3 pr-4 text-[var(--brand-muted)]">{property.location ?? "—"}</td>
+                    <td className="py-3 pr-4 text-[var(--brand-muted)]">{property.property_type ?? "—"}</td>
                     <td className="py-3 pr-4">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${property.published ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${property.published ? "bg-[rgba(185,149,85,0.16)] text-[var(--brand-gold)]" : "bg-slate-100 text-slate-600"}`}>
                         {property.published ? "Published" : "Draft"}
                       </span>
                     </td>
@@ -66,7 +66,7 @@ export default async function AdminDashboardPage() {
             </table>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-500">
+          <div className="border border-dashed border-[var(--brand-border)] bg-[var(--brand-offwhite)] p-6 text-center text-sm text-[var(--brand-muted)]">
             No properties have been added yet.
           </div>
         )}

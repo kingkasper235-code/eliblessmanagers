@@ -71,9 +71,6 @@ export type Property = {
   type: string;
 };
 
-const fallbackImage =
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80";
-
 function formatPrice(value: number, currency: string, listingType: ListingType) {
   const formatted = new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -114,7 +111,7 @@ function normalizeProperty(record: DbProperty): Property {
     id: Number(record.id),
     slug: record.slug,
     title: record.title,
-    description: record.description ?? "A premium property opportunity in Nigeria.",
+    description: record.description ?? "",
     price: formatPrice(priceValue, currency, listingType),
     priceValue,
     currency,
@@ -133,9 +130,9 @@ function normalizeProperty(record: DbProperty): Property {
     status: record.listing_type === "sale" ? "For Sale" : "For Rent",
     featured: Boolean(record.featured),
     published: Boolean(record.published),
-    image: gallery[0] ?? fallbackImage,
-    gallery: gallery.length ? gallery : [fallbackImage],
-    features: features.length ? features : ["Secure location", "Modern finish", "Good access"],
+    image: gallery[0] ?? "",
+    gallery,
+    features,
     type: propertyType,
   };
 }

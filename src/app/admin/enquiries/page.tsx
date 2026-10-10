@@ -11,42 +11,42 @@ export default async function AdminEnquiriesPage() {
       {enquiries.length ? (
         <div className="space-y-4">
           {enquiries.map((enquiry) => (
-            <div key={enquiry.id} className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 md:flex-row md:items-center md:justify-between">
+            <div key={enquiry.id} className="border border-[var(--brand-border)] bg-white p-5">
+              <div className="flex flex-col gap-3 border-b border-[var(--brand-border)] pb-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-lg font-bold text-slate-900">{enquiry.name}</p>
-                  <p className="text-sm text-slate-500">{enquiry.email} · {enquiry.phone}</p>
+                  <p className="text-lg font-semibold text-[var(--brand-navy)]">{enquiry.name}</p>
+                  <p className="text-sm text-[var(--brand-muted)]">{enquiry.email} · {enquiry.phone}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                     enquiry.status === "New"
-                      ? "bg-emerald-100 text-emerald-700"
+                      ? "bg-[rgba(185,149,85,0.16)] text-[var(--brand-gold)]"
                       : enquiry.status === "Contacted"
-                        ? "bg-amber-100 text-amber-700"
-                        : "bg-slate-200 text-slate-700"
+                        ? "bg-[var(--brand-neutral)] text-[var(--brand-navy)]"
+                        : "bg-[var(--brand-neutral)] text-[var(--brand-muted)]"
                   }`}>
                     {enquiry.status}
                   </span>
-                  <span className="text-xs text-slate-500">{new Date(enquiry.created_at).toLocaleDateString()}</span>
+                  <span className="text-xs text-[var(--brand-muted)]">{new Date(enquiry.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
 
               <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Property</p>
-                  <p className="mt-1 text-sm font-medium text-slate-700">{enquiry.property_title ?? "General enquiry"}</p>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">{enquiry.message}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand-muted)]">Property</p>
+                  <p className="mt-1 text-sm font-medium text-[var(--brand-navy)]">{enquiry.property_title ?? "General enquiry"}</p>
+                  <p className="mt-4 text-sm leading-7 text-[var(--brand-muted)]">{enquiry.message}</p>
                 </div>
 
                 <form action={updateEnquiryStatusAction} className="flex flex-col gap-2 md:min-w-[220px]">
                   <input type="hidden" name="enquiryId" value={String(enquiry.id)} />
-                  <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Status</label>
-                  <select name="status" defaultValue={enquiry.status} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 outline-none focus:border-emerald-500">
+                  <label className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand-muted)]">Status</label>
+                  <select name="status" defaultValue={enquiry.status} className="form-control">
                     <option value="New">New</option>
                     <option value="Contacted">Contacted</option>
                     <option value="Closed">Closed</option>
                   </select>
-                  <button type="submit" className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+                  <button type="submit" className="min-h-11 bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)]">
                     Update status
                   </button>
                 </form>
@@ -55,8 +55,8 @@ export default async function AdminEnquiriesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-slate-600">No enquiries have been received yet.</p>
+        <div className="border border-dashed border-[var(--brand-border)] bg-white p-6">
+          <p className="text-[var(--brand-muted)]">No enquiries have been received yet.</p>
         </div>
       )}
     </AdminShell>

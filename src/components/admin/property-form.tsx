@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type AuthChangeEvent, type Session } from "@supabase/supabase-js";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 import { savePropertyAction } from "@/lib/admin-actions";
 import { supabaseBrowser } from "@/lib/supabase-browser";
@@ -53,72 +52,6 @@ export function PropertyForm({
   const [images, setImages] = useState<GalleryImage[]>(() => normalizeGalleryImages(values));
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [authStateReady, setAuthStateReady] = useState(false);
-  const [authenticatedUserId, setAuthenticatedUserId] = useState<string | null>(null);
-  const [isAdminAuthorized, setIsAdminAuthorized] = useState(false);
-
-  useEffect(() => {
-    const supabase = supabaseBrowser;
-
-    if (!supabase) {
-      setAuthStateReady(true);
-      return;
-    }
-
-    let active = true;
-
-    const syncAuthState = async () => {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-
-      if (!active) {
-        return;
-      }
-
-      if (error) {
-        console.warn("[Property upload auth] session lookup error", { errorMessage: error.message });
-      }
-
-      const currentUserId = session?.user?.id ?? null;
-      setAuthenticatedUserId(currentUserId);
-      setIsAdminAuthorized(false);
-      setAuthStateReady(true);
-
-      console.info("[Property upload auth] session state", {
-        hasSession: Boolean(session),
-        authenticatedUserId: currentUserId,
-        isAdminAuthorized: false,
-      });
-    };
-
-    syncAuthState();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-      if (!active) {
-        return;
-      }
-
-      const currentUserId = session?.user?.id ?? null;
-      setAuthenticatedUserId(currentUserId);
-      setIsAdminAuthorized(false);
-      setAuthStateReady(true);
-
-      console.info("[Property upload auth] auth state changed", {
-        hasSession: Boolean(session),
-        authenticatedUserId: currentUserId,
-        isAdminAuthorized: false,
-      });
-    });
-
-    return () => {
-      active = false;
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const primaryImage = images.find((image) => image.is_primary) ?? images[0] ?? null;
   const imagePayload = JSON.stringify(
@@ -155,32 +88,6 @@ export function PropertyForm({
     setUploadError(null);
 
     try {
-      let session = null as Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"] | null;
-
-      if (!authStateReady) {
-        const {
-          data: sessionData,
-          error: sessionError,
-        } = await supabase.auth.getSession();
-
-        session = sessionData.session;
-
-        if (sessionError) {
-          console.warn("[Property upload auth] getSession failed while waiting for auth state", { errorMessage: sessionError.message });
-        }
-
-        if (!session?.user) {
-          console.log("[ADMIN UPLOAD AUTH]", {
-            hasSession: false,
-            userId: null,
-            email: null,
-            isAdmin: false,
-          });
-          setUploadError("Waiting for your authenticated admin session to initialize...");
-          return;
-        }
-      }
-
       const {
         data: { user },
         error: userError,
@@ -189,8 +96,6 @@ export function PropertyForm({
       if (userError || !user) {
         console.warn("[Property upload auth] getUser failed", {
           errorMessage: userError?.message ?? "No authenticated user found.",
-          hasSession: Boolean(authenticatedUserId),
-          authenticatedUserId,
         });
         throw new Error("You must be signed in as an authenticated admin before uploading images.");
       }
@@ -203,13 +108,6 @@ export function PropertyForm({
         .maybeSingle();
 
       const { data: isAdmin, error: adminCheckError } = await supabase.rpc("is_admin");
-
-      console.log("[ADMIN UPLOAD AUTH]", {
-        hasSession: !!session,
-        userId: user?.id ?? null,
-        email: user?.email ?? null,
-        isAdmin: Boolean(isAdmin),
-      });
 
       if (adminProfileError || !adminProfile) {
         console.warn("[Property upload auth] admin profile lookup failed", {
@@ -229,8 +127,6 @@ export function PropertyForm({
         throw new Error("You must be signed in as an authenticated admin before uploading images.");
       }
 
-      setAuthenticatedUserId(user.id);
-      setIsAdminAuthorized(true);
       console.info("[Property upload auth] admin authorization confirmed", {
         authenticatedUserId: user.id,
         hasSession: true,
@@ -323,7 +219,7 @@ export function PropertyForm({
             name="title"
             defaultValue={String(values.title ?? "")}
             required
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -333,7 +229,7 @@ export function PropertyForm({
             name="slug"
             defaultValue={String(values.slug ?? "")}
             required
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -344,7 +240,7 @@ export function PropertyForm({
             type="number"
             defaultValue={Number(values.price ?? 0)}
             required
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -353,7 +249,7 @@ export function PropertyForm({
           <select
             name="currency"
             defaultValue={String(values.currency ?? "NGN")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           >
             <option value="NGN">NGN</option>
             <option value="USD">USD</option>
@@ -365,7 +261,7 @@ export function PropertyForm({
           <select
             name="propertyType"
             defaultValue={String(values.property_type ?? "Apartment")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           >
             <option>Apartment</option>
             <option>Duplex</option>
@@ -381,7 +277,7 @@ export function PropertyForm({
           <select
             name="listingType"
             defaultValue={String(values.listing_type ?? "sale")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           >
             <option value="sale">For Sale</option>
             <option value="rent">For Rent</option>
@@ -394,7 +290,7 @@ export function PropertyForm({
             name="location"
             defaultValue={String(values.location ?? "")}
             required
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -403,7 +299,7 @@ export function PropertyForm({
           <input
             name="address"
             defaultValue={String(values.address ?? "")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -412,7 +308,7 @@ export function PropertyForm({
           <input
             name="city"
             defaultValue={String(values.city ?? "")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -421,7 +317,7 @@ export function PropertyForm({
           <input
             name="state"
             defaultValue={String(values.state ?? "")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -431,7 +327,7 @@ export function PropertyForm({
             name="bedrooms"
             type="number"
             defaultValue={Number(values.bedrooms ?? 0)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -441,7 +337,7 @@ export function PropertyForm({
             name="bathrooms"
             type="number"
             defaultValue={Number(values.bathrooms ?? 0)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -451,7 +347,7 @@ export function PropertyForm({
             name="toilets"
             type="number"
             defaultValue={Number(values.toilets ?? 0)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -461,7 +357,7 @@ export function PropertyForm({
             name="propertySize"
             type="number"
             defaultValue={Number(values.property_size ?? 0)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -471,7 +367,7 @@ export function PropertyForm({
             name="yearBuilt"
             type="number"
             defaultValue={Number(values.year_built ?? 0)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -480,7 +376,7 @@ export function PropertyForm({
           <select
             name="status"
             defaultValue={String(values.status ?? "available")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           >
             <option value="available">Available</option>
             <option value="pending">Pending</option>
@@ -495,7 +391,7 @@ export function PropertyForm({
             name="description"
             defaultValue={String(values.description ?? "")}
             rows={5}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
@@ -511,14 +407,14 @@ export function PropertyForm({
                     .join(", ")
                 : "",
             )}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[var(--brand-gold)]"
           />
         </div>
 
         <div className="md:col-span-2 space-y-4">
           <div className="flex items-center justify-between gap-3">
             <label className="block text-sm font-medium text-slate-700">Property gallery</label>
-            <label className="inline-flex cursor-pointer items-center rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700">
+            <label className="inline-flex cursor-pointer items-center rounded-full bg-[var(--brand-navy)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)]">
               <input type="file" accept="image/*" multiple className="hidden" onChange={handleUpload} />
               {uploading ? "Uploading..." : "Upload images"}
             </label>
@@ -535,7 +431,7 @@ export function PropertyForm({
                   <div className="relative h-32 overflow-hidden">
                     <Image src={image.url} alt={`Property ${index + 1}`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
                     {image.is_primary ? (
-                      <span className="absolute left-2 top-2 rounded-full bg-emerald-600 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      <span className="absolute left-2 top-2 rounded-full bg-[var(--brand-navy)] px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                         Primary
                       </span>
                     ) : null}
@@ -568,12 +464,12 @@ export function PropertyForm({
 
         <div className="flex items-center gap-4 md:col-span-2">
           <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
-            <input name="featured" type="checkbox" defaultChecked={Boolean(values.featured)} className="h-4 w-4 rounded border-slate-300 text-emerald-600" />
+            <input name="featured" type="checkbox" defaultChecked={Boolean(values.featured)} className="h-4 w-4 rounded border-slate-300 text-[var(--brand-gold)]" />
             Featured
           </label>
 
           <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
-            <input name="published" type="checkbox" defaultChecked={Boolean(values.published)} className="h-4 w-4 rounded border-slate-300 text-emerald-600" />
+            <input name="published" type="checkbox" defaultChecked={Boolean(values.published)} className="h-4 w-4 rounded border-slate-300 text-[var(--brand-gold)]" />
             Published
           </label>
         </div>
@@ -583,7 +479,7 @@ export function PropertyForm({
         <button type="button" className="rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700">
           Cancel
         </button>
-        <button type="submit" disabled={uploading} className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70">
+        <button type="submit" disabled={uploading} className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)] disabled:cursor-not-allowed disabled:opacity-70">
           {mode === "create" ? "Add property" : "Save changes"}
         </button>
       </div>

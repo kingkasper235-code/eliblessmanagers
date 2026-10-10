@@ -7,6 +7,7 @@ Create a new Supabase project in the Supabase dashboard and then run the SQL fro
 ## 2. Storage bucket
 
 Create a storage bucket named `property-images` with public access enabled.
+The schema allows authorized admins to upload property images under `properties/` and featured owner portraits under `owners/`.
 
 Recommended folder structure:
 
@@ -92,3 +93,9 @@ values (
 ```
 
 Then insert gallery rows and amenities using the related tables.
+
+## 6. Featured owner profiles
+
+The schema creates the `owners` table with two unique slots (`slot_number` 1 and 2). Each profile can be edited in **Admin → Settings**; a profile is public only when it has a name and its **Show publicly** option is enabled. Empty or inactive slots do not appear on the website.
+
+For an existing installation, run `migrations/20261009_owner_profiles.sql` after the base schema. It adds the owner table, admin/public row-level security policies, and admin-only uploads to the existing `property-images` bucket. Do not add sample owner names or photos; fill the two profiles with approved company information.

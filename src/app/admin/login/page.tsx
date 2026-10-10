@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 import { LoginForm } from "@/components/admin/login-form";
 import { redirectIfAdminLoggedIn } from "@/lib/admin";
+
+export const metadata: Metadata = {
+  title: "Admin login | Elibless Managers",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminLoginPage({
   searchParams,
@@ -16,7 +25,7 @@ export default async function AdminLoginPage({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(200,155,60,0.14),transparent_35%),var(--brand-offwhite)] px-4 py-10">
-      <div className="w-full max-w-md rounded-[32px] border border-[var(--brand-border)] bg-white p-6 shadow-[0_20px_70px_rgba(0,26,70,0.08)] sm:p-8">
+      <div className="w-full max-w-md border border-[var(--brand-border)] bg-white p-6 shadow-[0_16px_40px_rgba(9,25,35,0.08)] sm:p-8">
         <div className="mb-8 flex items-center justify-center">
           <Image
             src="/Elibless logo.png"
@@ -33,7 +42,7 @@ export default async function AdminLoginPage({
         </div>
 
         {isUnauthorized ? (
-          <div className="mb-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <div className="mb-5 border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             Unauthorized. This account is not registered as an admin in Supabase.
           </div>
         ) : null}

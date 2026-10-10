@@ -4,143 +4,136 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-const navigation = [
+const leftNavigation = [
   { name: "Home", href: "/" },
   { name: "Properties", href: "/properties" },
   { name: "For Sale", href: "/for-sale" },
+];
+
+const rightNavigation = [
   { name: "For Rent", href: "/for-rent" },
   { name: "Services", href: "/services" },
-  { name: "About Us", href: "/about" },
+  { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
 
-const socialLinks = [
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/eliblessmanagers/",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
-        <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.51 5.51 0 0 1 12 7.5Zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5Zm5.25-3.75a1.25 1.25 0 1 1-1.25 1.25 1.25 1.25 0 0 1 1.25-1.25Z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Facebook",
-    href: "https://www.facebook.com/eliblessproperty/",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
-        <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V7.2c0-.9.3-1.6 1.7-1.6H17V2.6c-.3 0-1.4-.2-2.7-.2-2.7 0-4.6 1.6-4.6 4.7v2.7H7v3.2h2.7v8h3.8Z" />
-      </svg>
-    ),
-  },
-];
+const allNavigation = [...leftNavigation, ...rightNavigation];
+
+function WhatsAppMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
+      <path d="M12.04 2a9.87 9.87 0 0 0-8.48 14.93L2 22l5.22-1.37A9.94 9.94 0 1 0 12.04 2Zm0 18.06a8.07 8.07 0 0 1-4.12-1.13l-.3-.18-3.1.81.83-3.02-.2-.31a8.06 8.06 0 1 1 6.9 3.83Zm4.42-6.04c-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.53.12-.16.24-.61.79-.74.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.18-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.49.1-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.53-1.28-.73-1.75-.19-.46-.39-.4-.53-.41h-.45c-.16 0-.41.06-.63.3-.22.24-.83.81-.83 1.97s.85 2.28.97 2.44c.12.16 1.67 2.55 4.04 3.58.56.24 1 .39 1.34.5.56.18 1.08.16 1.49.1.45-.07 1.44-.59 1.65-1.16.2-.58.2-1.08.14-1.18-.06-.1-.22-.16-.46-.28Z" />
+    </svg>
+  );
+}
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--brand-border)] bg-[var(--brand-white)]/90 backdrop-blur-xl">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center" aria-label="Elibless Managers homepage">
-          <Image
-            src="/Elibless logo.png"
-            alt="Elibless Managers logo"
-            width={220}
-            height={62}
-            priority
-            className="h-auto w-[150px] sm:w-[180px] lg:w-[220px]"
-          />
-        </Link>
+    <header className="sticky top-0 z-50 border-b border-[var(--brand-border)] bg-white">
+      <nav aria-label="Main navigation" className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-10">
+        <div className="hidden min-h-[78px] grid-cols-[1fr_auto_1fr] items-center gap-5 xl:grid">
+          <div className="flex items-center gap-5">
+            {leftNavigation.map((item) => (
+              <Link key={item.href} href={item.href} className="nav-link">
+                {item.name}
+              </Link>
+            ))}
+          </div>
 
-        <div className="hidden items-center gap-7 lg:flex">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm font-semibold text-[var(--brand-navy)] transition hover:text-[var(--brand-gold)]"
+          <Link href="/" aria-label="Elibless Managers home" className="relative z-10 mx-4 block w-[174px]">
+            <Image
+              src="/Elibless logo.png"
+              alt="Elibless Managers"
+              width={220}
+              height={62}
+              priority
+              className="h-auto w-full"
+            />
+          </Link>
+
+          <div className="flex items-center justify-end gap-5">
+            {rightNavigation.map((item) => (
+              <Link key={item.href} href={item.href} className="nav-link">
+                {item.name}
+              </Link>
+            ))}
+            <a
+              href="https://wa.me/2348067136381"
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="Contact Elibless Managers on WhatsApp"
+              className="inline-flex min-h-10 items-center gap-2 bg-[var(--brand-navy)] px-3.5 text-xs font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-gold)]"
             >
-              {item.name}
-            </Link>
-          ))}
+              <WhatsAppMark />
+              WhatsApp
+            </a>
+          </div>
         </div>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <a
-            href="tel:+2348067136381"
-            className="rounded-full border border-[var(--brand-gold)] bg-white px-5 py-2.5 text-sm font-semibold text-[var(--brand-navy)] transition hover:bg-[var(--brand-gold-light)] hover:text-[var(--brand-navy-dark)]"
+        <div className="relative grid min-h-[64px] grid-cols-[1fr_auto_1fr] items-center xl:hidden">
+          <button
+            type="button"
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-controls="mobile-navigation"
+            aria-expanded={isOpen}
+            className="inline-flex h-10 w-10 items-center justify-center justify-self-start border border-[var(--brand-border)] text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-gold)]"
+            onClick={() => setIsOpen((value) => !value)}
           >
-            Call Now
-          </a>
+            <span className="sr-only">{isOpen ? "Close menu" : "Open menu"}</span>
+            {isOpen ? (
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
+                <path d="m6 6 12 12M18 6 6 18" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 stroke-current" fill="none" strokeWidth="1.8">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            )}
+          </button>
+
+          <Link
+            href="/"
+            aria-label="Elibless Managers home"
+            className="col-start-2 row-start-1 w-[clamp(118px,38vw,148px)]"
+            onClick={() => setIsOpen(false)}
+          >
+            <Image
+              src="/Elibless logo.png"
+              alt="Elibless Managers"
+              width={220}
+              height={62}
+              priority
+              className="h-auto w-full"
+            />
+          </Link>
+
           <a
             href="https://wa.me/2348067136381"
             target="_blank"
             rel="noreferrer noopener"
-            className="rounded-full bg-[var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)]"
+            aria-label="Contact Elibless Managers on WhatsApp"
+            className="inline-flex h-10 w-10 items-center justify-center justify-self-end bg-[var(--brand-navy)] text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-gold)]"
           >
-            WhatsApp
+            <WhatsAppMark />
           </a>
-          <Link
-            href="/properties"
-            className="rounded-full border border-[var(--brand-border)] bg-[var(--brand-offwhite)] px-5 py-2.5 text-sm font-semibold text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]"
-          >
-            List a Property
-          </Link>
         </div>
-
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          aria-expanded={isOpen}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--brand-border)] bg-[var(--brand-offwhite)] text-[var(--brand-navy)] lg:hidden"
-          onClick={() => setIsOpen((value) => !value)}
-        >
-          {isOpen ? "✕" : "☰"}
-        </button>
       </nav>
 
       {isOpen ? (
-        <div className="border-t border-[var(--brand-border)] bg-[var(--brand-white)] px-4 py-4 lg:hidden">
-          <div className="flex flex-col gap-3">
-            {navigation.map((item) => (
+        <div id="mobile-navigation" className="border-t border-[var(--brand-border)] bg-white px-4 py-4 shadow-lg xl:hidden">
+          <div className="mx-auto grid max-w-7xl gap-1 sm:grid-cols-2">
+            {allNavigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-xl px-3 py-2 text-base font-medium text-[var(--brand-navy)] transition hover:bg-[var(--brand-neutral)] hover:text-[var(--brand-gold)]"
+                className="min-h-11 px-3 py-3 text-sm font-medium text-[var(--brand-navy-dark)] transition hover:bg-[var(--brand-offwhite)] hover:text-[var(--brand-gold)] focus-visible:outline-2 focus-visible:outline-[var(--brand-gold)]"
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <div className="mt-2 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-neutral)] p-3">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--brand-gold)]">Follow us</p>
-              <div className="flex flex-wrap gap-2">
-                {socialLinks.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={`Follow Elibless Managers on ${item.label}`}
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-navy)] px-3 py-2 text-sm font-semibold text-white"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-[var(--brand-gold-light)]">
-                      {item.icon}
-                    </span>
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <a
-              href="https://wa.me/2348067136381"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-2 rounded-full bg-[var(--brand-navy)] px-4 py-3 text-center text-sm font-semibold text-white"
-              onClick={() => setIsOpen(false)}
-            >
-              WhatsApp Us
-            </a>
           </div>
         </div>
       ) : null}

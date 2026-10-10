@@ -61,3 +61,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 Do not commit `.env.local`, `.env.production`, or any file containing a Supabase service-role key. The app intentionally uses only the public Supabase URL and publishable key in the browser. All writes are protected by Supabase RLS and admin pages require authenticated admin access.
+
+### Featured owner profiles
+
+Run the updated `supabase/schema.sql` for a new installation, or apply `supabase/migrations/20261009_owner_profiles.sql` after the existing schema. This creates two owner profile slots and permits admin-only portrait uploads to the existing `property-images` bucket. Manage the profiles from **Admin → Settings**; empty or inactive profiles stay hidden on the public site. See `supabase/README.md` for the storage and RLS details.

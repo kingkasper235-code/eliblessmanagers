@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "elibless-glassmorphism/**",
+    "elibless-site-settings-update/**",
     "next-env.d.ts",
   ]),
 ]);

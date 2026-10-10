@@ -6,7 +6,7 @@ import { submitEnquiryAction } from "@/lib/enquiries";
 
 export const metadata: Metadata = {
   title: "Contact | Elibless Managers",
-  description: "Get in touch with Elibless Managers for real estate enquiries, property advice, and viewing appointments.",
+  description: "Contact Elibless Managers for property advice, enquiries, and viewing appointments.",
   openGraph: {
     title: "Contact | Elibless Managers",
     description: "Speak with our property team about buying, renting, and investing in Nigeria.",
@@ -14,103 +14,132 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ success?: string }>;
+}) {
+  const successMessage = (await searchParams)?.success;
+
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Contact us</p>
-            <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-900">Let’s help you find the right property.</h1>
-            <div className="mt-8 space-y-4 text-base text-slate-700">
-              <p><a href="tel:+2348067136381" className="font-semibold text-slate-900 hover:text-emerald-700">Phone: 08067136381</a></p>
-              <p><a href="tel:+2347010466117" className="font-semibold text-slate-900 hover:text-emerald-700">Phone: 07010466117</a></p>
-              <p><a href="https://wa.me/2348067136381" target="_blank" rel="noreferrer noopener" className="font-semibold text-emerald-700 hover:text-emerald-800">WhatsApp: 08067136381</a></p>
-              <p><a href="mailto:Elibless123@gmail.com" className="font-semibold text-slate-900 hover:text-emerald-700">Email: Elibless123@gmail.com</a></p>
-              <p>
-                Instagram: <a href="https://www.instagram.com/eliblessmanagers/" target="_blank" rel="noreferrer noopener" className="font-semibold text-emerald-700 hover:text-emerald-800">@eliblessmanagers</a>
-              </p>
-              <p>
-                Facebook: <a href="https://www.facebook.com/eliblessproperty/" target="_blank" rel="noreferrer noopener" className="font-semibold text-emerald-700 hover:text-emerald-800">Elibless Property</a>
-              </p>
-              <p>Office: 12 Lekki Road, Lagos, Nigeria</p>
-              <p>Business hours: Mon - Fri, 8:00 AM - 6:00 PM</p>
-            </div>
+      <main>
+        <header className="bg-[var(--brand-navy-dark)] text-white">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
+            <p className="brand-section-kicker text-[var(--brand-gold-light)]">Contact</p>
+            <h1 className="mt-3 max-w-3xl text-5xl leading-[1.03] text-white sm:text-6xl">
+              Tell us what you’re looking for.
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-white/70">
+              A question, a viewing, a new property brief — we’re here to help you take the next step.
+            </p>
+          </div>
+        </header>
 
-            <div className="mt-8 rounded-[24px] border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center justify-between gap-3">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+          {successMessage ? (
+            <p role="status" className="mb-7 border border-[rgba(185,149,85,0.35)] bg-[rgba(185,149,85,0.08)] px-4 py-3 text-sm font-medium text-[var(--brand-navy)]">
+              {successMessage}
+            </p>
+          ) : null}
+
+          <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-12">
+            <aside className="bg-[var(--brand-navy)] p-6 text-white sm:p-8">
+              <p className="brand-section-kicker text-[var(--brand-gold-light)]">Reach the team</p>
+              <h2 className="mt-3 text-2xl text-white">A real person, a clear answer.</h2>
+              <div className="mt-7 space-y-5 border-t border-white/15 pt-6 text-sm">
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Social media</p>
-                  <p className="mt-2 text-lg font-bold text-slate-900">Follow Elibless</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">Call</p>
+                  <p className="mt-2 flex flex-col gap-1">
+                    <a href="tel:+2348067136381" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">08067136381</a>
+                    <a href="tel:+2347010466117" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">07010466117</a>
+                  </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href="https://www.instagram.com/eliblessmanagers/"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label="Open Elibless Managers Instagram"
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-emerald-700"
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
-                      <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.51 5.51 0 0 1 12 7.5Zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5Zm5.25-3.75a1.25 1.25 0 1 1-1.25 1.25 1.25 1.25 0 0 1 1.25-1.25Z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://www.facebook.com/eliblessproperty/"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label="Open Elibless Property on Facebook"
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#1877F2] text-white transition hover:opacity-90"
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
-                      <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V7.2c0-.9.3-1.6 1.7-1.6H17V2.6c-.3 0-1.4-.2-2.7-.2-2.7 0-4.6 1.6-4.6 4.7v2.7H7v3.2h2.7v8h3.8Z" />
-                    </svg>
-                  </a>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">Email</p>
+                  <a href="mailto:Elibless123@gmail.com" className="mt-2 inline-block font-semibold text-white hover:text-[var(--brand-gold-light)]">Elibless123@gmail.com</a>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">WhatsApp</p>
+                  <a href="https://wa.me/2348067136381" target="_blank" rel="noreferrer noopener" className="mt-2 inline-block font-semibold text-white hover:text-[var(--brand-gold-light)]">Message our team ↗</a>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">Visit</p>
+                  <p className="mt-2 leading-6 text-white/85">12 Lekki Road, Lagos, Nigeria</p>
+                </div>
+                <div className="border-t border-white/15 pt-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">Business hours</p>
+                  <p className="mt-2 leading-6 text-white/85">Mon – Fri, 8:00 AM – 6:00 PM<br />Saturday, 9:00 AM – 4:00 PM</p>
                 </div>
               </div>
-            </div>
+            </aside>
+
+            <section className="border border-[var(--brand-border)] bg-white p-5 sm:p-8">
+              <div className="mb-6">
+                <p className="brand-section-kicker">Send an enquiry</p>
+                <h2 className="mt-2 text-2xl font-semibold">How can we help?</h2>
+              </div>
+              <form action={submitEnquiryAction} className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="contact-name" className="form-label">Full name</label>
+                  <input id="contact-name" name="name" required autoComplete="name" maxLength={120} className="form-control" placeholder="Your name" />
+                </div>
+                <div>
+                  <label htmlFor="contact-email" className="form-label">Email address</label>
+                  <input id="contact-email" name="email" type="email" required autoComplete="email" maxLength={254} className="form-control" placeholder="you@example.com" />
+                </div>
+                <div>
+                  <label htmlFor="contact-phone" className="form-label">Phone number</label>
+                  <input id="contact-phone" name="phone" required autoComplete="tel" maxLength={40} className="form-control" placeholder="Your phone number" />
+                </div>
+                <div>
+                  <label htmlFor="contact-interest" className="form-label">What are you interested in?</label>
+                  <select id="contact-interest" name="interest" className="form-control">
+                    <option>Buying</option>
+                    <option>Renting</option>
+                    <option>Investment</option>
+                    <option>Property management</option>
+                    <option>Consultation</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="contact-message" className="form-label">Message</label>
+                  <textarea id="contact-message" name="message" rows={5} required maxLength={3000} className="form-control resize-y" placeholder="Tell us a little about what you need." />
+                </div>
+                <div className="sm:col-span-2">
+                  <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center bg-[var(--brand-navy)] px-6 text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)] sm:w-auto">
+                    Send enquiry <span className="ml-3" aria-hidden="true">↗</span>
+                  </button>
+                </div>
+              </form>
+            </section>
           </div>
 
-          <form action={submitEnquiryAction} className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <div className="grid gap-5 sm:grid-cols-2">
+          <section className="mt-10 border border-[var(--brand-border)] bg-white">
+            <div className="flex flex-col gap-2 border-b border-[var(--brand-border)] px-5 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-6">
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Full name</label>
-                <input name="name" required className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-500" placeholder="Your name" />
+                <p className="brand-section-kicker">Find us</p>
+                <h2 className="mt-1 text-xl font-semibold">Lagos office</h2>
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
-                <input name="email" type="email" required className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-500" placeholder="you@example.com" />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Phone</label>
-                <input name="phone" required className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-500" placeholder="Phone number" />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Property interest</label>
-                <select name="interest" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-500">
-                  <option>Buying</option>
-                  <option>Renting</option>
-                  <option>Investment</option>
-                  <option>Consultation</option>
-                </select>
-              </div>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=12+Lekki+Road%2C+Lagos%2C+Nigeria"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-sm font-semibold text-[var(--brand-navy)] underline decoration-[var(--brand-gold)] underline-offset-4 hover:text-[var(--brand-gold)]"
+              >
+                Open in Google Maps ↗
+              </a>
             </div>
-
-            <div className="mt-5">
-              <label className="mb-2 block text-sm font-medium text-slate-700">Message</label>
-              <textarea name="message" rows={5} required className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-500" placeholder="Tell us about your property needs" />
-            </div>
-
-            <button type="submit" className="mt-6 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">Send enquiry</button>
-          </form>
-        </div>
-
-        <div className="mt-12 rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Map</div>
-          <div className="flex h-72 items-center justify-center rounded-[24px] bg-slate-100 text-lg font-semibold text-slate-500">
-            Lagos office map preview
-          </div>
+            <iframe
+              title="Map showing 12 Lekki Road, Lagos, Nigeria"
+              src="https://www.google.com/maps?q=12%20Lekki%20Road%2C%20Lagos%2C%20Nigeria&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="h-72 w-full border-0 sm:h-80"
+            />
+          </section>
         </div>
       </main>
       <Footer />

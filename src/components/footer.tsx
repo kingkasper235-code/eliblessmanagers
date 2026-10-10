@@ -33,7 +33,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="mt-20 bg-[var(--brand-navy)] text-white">
+    <footer className="bg-[var(--brand-navy)] text-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-5">
@@ -101,11 +101,9 @@ export function Footer() {
 
         <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
           <p>© 2026 Elibless Managers. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <span className="hover:text-[var(--brand-gold-light)]">Privacy</span>
-            <span className="hover:text-[var(--brand-gold-light)]">Terms</span>
-            <span className="hover:text-[var(--brand-gold-light)]">Support</span>
-          </div>
+          <Link href="/contact" className="font-semibold text-[var(--brand-gold-light)] transition hover:text-white">
+            Get in touch <span aria-hidden="true">↗</span>
+          </Link>
         </div>
       </div>
     </footer>
