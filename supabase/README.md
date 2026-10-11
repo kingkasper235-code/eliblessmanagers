@@ -47,14 +47,16 @@ values ('<auth-user-uuid>', 'Admin User');
 
 ### Admin password recovery
 
-In **Authentication → URL Configuration**, add these exact redirect URLs (replace the production host with the site's real origin):
+In **Authentication → URL Configuration**, allow the reset URLs used by the app:
 
 ```text
 http://localhost:3000/reset-password
-https://your-production-domain/reset-password
+https://eliblessmanagers.com.ng/reset-password
 ```
 
-The admin login's **Forgot your password?** link sends the recovery email back to `/reset-password`. A valid Supabase recovery session is required to set a new password; after it is updated, the browser session is cleared and the user returns to `/admin/login`. Admin access still requires an `admin_profiles` row with the `admin` role.
+The admin login's **Forgot your password?** link explicitly sends the recovery email to `https://eliblessmanagers.com.ng/reset-password`. The current Vercel domain redirect forwards that path to the `www` hostname without dropping it. A valid Supabase recovery session is required to set a new password; after it is updated, the browser session is cleared and the user returns to `/admin/login`. Admin access still requires an `admin_profiles` row with the `admin` role.
+
+The Supabase **Reset Password** email template must link through `{{ .ConfirmationURL }}` so Supabase honors the redirect URL sent by the app. A customized template that links directly to `{{ .SiteURL }}` will return users to the homepage instead.
 
 ## 5. Data insertion example
 

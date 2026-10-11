@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
-import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
 import { hasSupabaseConfig } from "@/lib/supabase";
 import {
+  checkPasswordRecoverySession,
   createBrowserSupabaseClient,
-  hasActivePasswordRecoverySession,
+  subscribeToBrowserAuthChanges,
 } from "@/lib/supabase-browser";
 
 type RecoveryState =
@@ -31,34 +31,49 @@ export function ResetPasswordForm() {
     const supabase = createBrowserSupabaseClient();
     if (!supabase) return;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event: AuthChangeEvent, session: Session | null) => {
-        if (event === "PASSWORD_RECOVERY" && session?.user) {
-          setRecoveryState("ready");
-        } else if (event === "PASSWORD_RECOVERY") {
-          setRecoveryState("invalid");
-        }
-      },
-    );
+    let isMounted = true;
+    let verificationInProgress = false;
+    let recheckRequested = false;
+
+    async function verifyRecoverySession() {
+      if (verificationInProgress) {
+        recheckRequested = true;
+        return;
+      }
+
+      verificationInProgress = true;
+      do {
+        recheckRequested = false;
+        setRecoveryState("checking");
+        const status = await checkPasswordRecoverySession();
+        if (!isMounted) break;
+        if (recheckRequested) continue;
+
+        setRecoveryState(status === "valid" ? "ready" : status);
+      } while (recheckRequested);
+      verificationInProgress = false;
+    }
+
+    const unsubscribe = subscribeToBrowserAuthChanges((event, session) => {
+      if (event === "PASSWORD_RECOVERY" && session?.user) {
+        void verifyRecoverySession();
+      } else if (event === "PASSWORD_RECOVERY") {
+        setRecoveryState("invalid");
+      } else if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        setRecoveryState("invalid");
+      }
+    });
     const timeout = window.setTimeout(() => {
-      setRecoveryState((current) =>
-        current === "checking" ? "invalid" : current,
-      );
-    }, 15000);
-    void hasActivePasswordRecoverySession().then((hasRecoverySession) => {
-      if (hasRecoverySession) setRecoveryState("ready");
-    }).catch((caughtError: unknown) => {
-      console.error("[admin-password-reset] Recovery session check failed", {
-        reason: caughtError instanceof Error ? caughtError.name : "unknown",
-      });
       setRecoveryState((current) =>
         current === "checking" ? "unavailable" : current,
       );
-    });
+    }, 15000);
+    void verifyRecoverySession();
 
     return () => {
+      isMounted = false;
       window.clearTimeout(timeout);
-      subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 

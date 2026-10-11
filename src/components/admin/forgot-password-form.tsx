@@ -26,7 +26,7 @@ export function ForgotPasswordForm() {
     try {
       const { error: requestError } = await supabase.auth.resetPasswordForEmail(
         email.trim(),
-        { redirectTo: `${window.location.origin}/reset-password` },
+        { redirectTo: "https://eliblessmanagers.com.ng/reset-password" },
       );
       if (requestError) {
         setError("We could not send the reset email. Check the address and Supabase URL configuration, then try again.");
