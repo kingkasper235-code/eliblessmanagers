@@ -5,6 +5,12 @@ import { createSupabaseClient } from "@/lib/supabase";
 export const DEFAULT_GOOGLE_BUSINESS_LISTING_URL =
   "https://maps.app.goo.gl/4aRcQcEtzcHtt8878";
 
+const GOOGLE_MAPS_HOSTS = new Set([
+  "google.com",
+  "www.google.com",
+  "maps.google.com",
+]);
+
 export type GoogleBusinessConnectionStatus =
   | "not_configured"
   | "connected"
@@ -56,14 +62,8 @@ export function isAllowedGoogleMapsUrl(value: string): boolean {
       return url.pathname === "/maps" || url.pathname.startsWith("/maps/");
     }
 
-    const googleMapsHost =
-      hostname === "maps.google.com" ||
-      hostname === "google.com" ||
-      hostname === "www.google.com" ||
-      /^maps\.google\.[a-z]{2,3}(?:\.[a-z]{2})?$/.test(hostname) ||
-      /^www\.google\.[a-z]{2,3}(?:\.[a-z]{2})?$/.test(hostname);
-
-    return googleMapsHost && /^\/maps(?:\/|$)/i.test(url.pathname);
+    return GOOGLE_MAPS_HOSTS.has(hostname) &&
+      /^\/maps(?:\/|$)/i.test(url.pathname);
   } catch {
     return false;
   }
