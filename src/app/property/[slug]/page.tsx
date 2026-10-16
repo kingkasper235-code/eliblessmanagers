@@ -159,6 +159,45 @@ export default async function PropertyDetailsPage({
           </aside>
         </div>
 
+        {property.videos.length ? (
+          <section className="mt-12 border border-[var(--brand-border)] bg-white p-6 md:p-8">
+            <h2 className="text-2xl font-semibold text-[var(--brand-navy)]">Property Video Tour</h2>
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {property.videos.map((video) => (
+                <article key={video.id} className="min-w-0">
+                  <div className="aspect-video overflow-hidden bg-[var(--brand-navy)]">
+                    {video.source_type === "youtube" && video.video_url ? (
+                      <iframe
+                        src={video.video_url}
+                        title={video.title || "Property video tour"}
+                        loading="lazy"
+                        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                        className="h-full w-full"
+                      />
+                    ) : (
+                      <video
+                        controls
+                        playsInline
+                        preload="metadata"
+                        poster={property.image || undefined}
+                        className="h-full w-full"
+                      >
+                        <source src={`/api/property-videos/${video.id}`} type="video/mp4" />
+                        Your browser does not support HTML5 video.
+                      </video>
+                    )}
+                  </div>
+                  {video.title ? (
+                    <h3 className="mt-3 text-base font-semibold text-[var(--brand-navy)]">{video.title}</h3>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="mt-12 border border-[var(--brand-border)] bg-white p-6 md:p-8">
           <h2 className="text-2xl font-semibold text-[var(--brand-navy)]">Property description</h2>
           {property.description ? (

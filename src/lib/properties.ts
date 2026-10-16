@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getYouTubeEmbedUrl } from "@/lib/property-videos";
 
 export type ListingType = "sale" | "rent";
 export type PropertyStatus = "available" | "pending" | "sold" | "leased" | "rented" | "unavailable";
@@ -40,6 +41,22 @@ export type DbProperty = {
   updated_at: string | null;
   property_images?: Array<{ image_url: string; display_order?: number | null; is_primary?: boolean | null }> | null;
   property_amenities?: Array<{ amenity?: string | null; name?: string | null }> | null;
+  property_videos?: Array<{
+    id: number;
+    source_type: "upload" | "youtube";
+    video_url: string | null;
+    title: string;
+    display_order: number;
+    upload_status: "pending" | "ready" | "failed";
+  }> | null;
+};
+
+export type PropertyVideo = {
+  id: number;
+  source_type: "upload" | "youtube";
+  video_url: string | null;
+  title: string;
+  display_order: number;
 };
 
 export type Property = {
@@ -67,6 +84,7 @@ export type Property = {
   published: boolean;
   image: string;
   gallery: string[];
+  videos: PropertyVideo[];
   features: string[];
   type: string;
 };
@@ -104,6 +122,28 @@ function normalizeProperty(record: DbProperty): Property {
   const features = (record.property_amenities ?? [])
     .map((item) => (item.amenity ?? item.name ?? "").trim())
     .filter((value): value is string => Boolean(value));
+  const videos = (record.property_videos ?? [])
+    .filter((video) => video.upload_status === "ready")
+    .slice()
+    .sort((a, b) => a.display_order - b.display_order)
+    .flatMap((video) => {
+      const videoUrl =
+        video.source_type === "youtube" && video.video_url
+          ? getYouTubeEmbedUrl(video.video_url)
+          : null;
+
+      if (video.source_type === "youtube" && !videoUrl) {
+        return [];
+      }
+
+      return [{
+        id: Number(video.id),
+        source_type: video.source_type,
+        video_url: videoUrl,
+        title: video.title,
+        display_order: Number(video.display_order),
+      }];
+    });
 
   const propertySize = Number(record.property_size ?? 0);
 
@@ -132,6 +172,7 @@ function normalizeProperty(record: DbProperty): Property {
     published: Boolean(record.published),
     image: gallery[0] ?? "",
     gallery,
+    videos,
     features,
     type: propertyType,
   };
@@ -261,7 +302,7 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
   try {
     const { data, error } = await supabase
       .from("properties")
-      .select("*, property_images(image_url, display_order, is_primary), property_amenities(amenity)")
+      .select("*, property_images(image_url, display_order, is_primary), property_amenities(amenity), property_videos(id, source_type, video_url, title, display_order, upload_status)")
       .eq("published", true)
       .eq("slug", slug)
       .maybeSingle();

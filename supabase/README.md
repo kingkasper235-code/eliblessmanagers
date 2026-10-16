@@ -19,6 +19,14 @@ property-images/
       gallery-1.jpg
 ```
 
+### Property videos
+
+For an existing project, run `migrations/20261016_property_videos.sql` before deploying the application changes. It creates the `property_videos` table, the private `property-videos` bucket, and the related RLS policies. Running `schema.sql` on a new project creates the same table and bucket configuration.
+
+The bucket accepts MP4 files only and limits each object to 50 MiB. The admin form can set a lower limit with `NEXT_PUBLIC_PROPERTY_VIDEO_MAX_SIZE_MB`; values above 50 MiB are capped to the bucket limit. To raise the limit, update the bucket's `file_size_limit` and the application cap together, and confirm the deployment's request/streaming limits first.
+
+Uploaded videos are kept private. Public playback is streamed through the application only while the related property is published and has an `available` or `pending` status. YouTube videos are stored as separate external URL records; only supported YouTube URL formats are converted to `youtube-nocookie.com` embeds.
+
 ## 3. Environment variables
 
 Create a `.env.local` file from the example file and fill in the values from your project settings:
@@ -30,6 +38,7 @@ cp .env.example .env.local
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-public-key
+NEXT_PUBLIC_PROPERTY_VIDEO_MAX_SIZE_MB=50
 ```
 
 Do not expose the service-role key in frontend code. Use the public/publishable key only.

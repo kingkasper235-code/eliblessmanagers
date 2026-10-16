@@ -14,6 +14,7 @@ export type AdminPropertySummary = {
   featured: boolean | null;
   created_at: string | null;
   image_url: string | null;
+  video_count?: number;
 };
 
 export async function getAdminDashboardStats() {
@@ -114,7 +115,7 @@ export async function getAdminPropertiesList({
 
   let query = supabase
     .from("properties")
-    .select("id, title, slug, location, price, currency, property_type, listing_type, status, published, featured, created_at, property_images(image_url, is_primary, display_order)", {
+    .select("id, title, slug, location, price, currency, property_type, listing_type, status, published, featured, created_at, property_images(image_url, is_primary, display_order), property_videos(count)", {
       count: "exact",
     });
 
@@ -159,10 +160,14 @@ export async function getAdminPropertiesList({
   const items = ((data ?? []) as Array<Record<string, unknown>>).map((property) => {
     const images = Array.isArray(property.property_images) ? property.property_images : [];
     const primaryImage = images.find((image: { is_primary?: boolean }) => image.is_primary) ?? images[0] ?? null;
+    const videoCounts = Array.isArray(property.property_videos)
+      ? property.property_videos as Array<{ count?: number }>
+      : [];
 
     return {
       ...(property as AdminPropertySummary),
       image_url: primaryImage?.image_url ?? null,
+      video_count: videoCounts.reduce((total, video) => total + Number(video.count ?? 0), 0),
     };
   }) as AdminPropertySummary[];
 
@@ -185,7 +190,7 @@ export async function getAdminPropertyById(propertyId: number) {
   const { data, error } = await supabase
     .from("properties")
     .select(
-      "*, property_images(image_url, display_order), property_amenities(amenity)",
+      "*, property_images(image_url, display_order), property_amenities(amenity), property_videos(id, property_id, storage_path, source_type, video_url, title, display_order, upload_status, replaces_video_id, created_at)",
     )
     .eq("id", propertyId)
     .maybeSingle();

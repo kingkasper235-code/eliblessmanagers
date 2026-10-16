@@ -96,6 +96,7 @@ export default async function AdminPropertiesPage({
                     <th className="py-3 pr-4 font-medium">Status</th>
                     <th className="py-3 pr-4 font-medium">Published</th>
                     <th className="py-3 pr-4 font-medium">Featured</th>
+                    <th className="py-3 pr-4 font-medium">Videos</th>
                     <th className="py-3 pr-4 font-medium">Created</th>
                     <th className="py-3 pr-4 font-medium">Actions</th>
                   </tr>
@@ -133,6 +134,9 @@ export default async function AdminPropertiesPage({
                         <span className={`px-2 py-1 text-[11px] font-semibold ${property.featured ? "bg-[rgba(185,149,85,0.16)] text-[var(--brand-gold)]" : "bg-[var(--brand-neutral)] text-[var(--brand-muted)]"}`}>
                           {property.featured ? "Yes" : "No"}
                         </span>
+                      </td>
+                      <td className="py-3 pr-4 text-[var(--brand-muted)]">
+                        {property.video_count ? `${property.video_count} ${property.video_count === 1 ? "video" : "videos"}` : "—"}
                       </td>
                       <td className="py-3 pr-4 text-[var(--brand-muted)]">{property.created_at ? new Date(property.created_at).toLocaleDateString() : "—"}</td>
                       <td className="py-3 pr-4">
