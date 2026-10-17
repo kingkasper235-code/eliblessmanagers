@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { OwnerShowcase } from "@/components/owner-showcase";
 import { PropertyCard } from "@/components/property-card";
+import { PHONE_CONTACTS } from "@/lib/contact";
 import { getActiveOwners } from "@/lib/owners";
 import { getFeaturedProperties, getLatestProperties } from "@/lib/properties";
 
@@ -314,9 +315,11 @@ export default function HomePage() {
               <Link href="/contact" className="inline-flex min-h-12 items-center bg-[var(--brand-gold)] px-5 text-sm font-semibold text-[var(--brand-navy-dark)] transition hover:bg-[var(--brand-gold-light)]">
                 Contact our team <span className="ml-3" aria-hidden="true">↗</span>
               </Link>
-              <a href="https://wa.me/2348067136381" target="_blank" rel="noreferrer noopener" className="inline-flex min-h-12 items-center border border-white/30 px-5 text-sm font-semibold text-white transition hover:bg-white/10">
-                WhatsApp
-              </a>
+              {PHONE_CONTACTS.map((contact) => (
+                <a key={contact.display} href={contact.whatsapp} target="_blank" rel="noreferrer noopener" className="inline-flex min-h-12 items-center border border-white/30 px-4 text-sm font-semibold text-white transition hover:bg-white/10">
+                  WhatsApp {contact.display}
+                </a>
+              ))}
             </div>
           </div>
         </section>

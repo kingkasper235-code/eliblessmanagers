@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { PHONE_CONTACTS } from "@/lib/contact";
 
 const footerLinks = [
   { label: "Properties", href: "/properties" },
@@ -81,8 +82,14 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--brand-gold-light)]">Contact</h3>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
-              <li><a href="tel:+2348067136381" className="hover:text-[var(--brand-gold-light)]">08067136381</a></li>
-              <li><a href="tel:+2347010466117" className="hover:text-[var(--brand-gold-light)]">07010466117</a></li>
+              {PHONE_CONTACTS.map((contact) => (
+                <li key={contact.display} className="flex flex-col gap-1">
+                  <a href={contact.tel} className="w-fit hover:text-[var(--brand-gold-light)]">{contact.display}</a>
+                  <a href={contact.whatsapp} target="_blank" rel="noreferrer noopener" className="w-fit text-xs text-slate-400 hover:text-[var(--brand-gold-light)]">
+                    WhatsApp {contact.display} ↗
+                  </a>
+                </li>
+              ))}
               <li><a href="mailto:Elibless123@gmail.com" className="hover:text-[var(--brand-gold-light)]">Elibless123@gmail.com</a></li>
               <li><a href="https://www.instagram.com/eliblessmanagers/" target="_blank" rel="noreferrer noopener" className="hover:text-[var(--brand-gold-light)]">@eliblessmanagers</a></li>
               <li><a href="https://www.facebook.com/eliblessproperty/" target="_blank" rel="noreferrer noopener" className="hover:text-[var(--brand-gold-light)]">Elibless Property</a></li>

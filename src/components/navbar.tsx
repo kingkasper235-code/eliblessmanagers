@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { PHONE_CONTACTS } from "@/lib/contact";
 
 const leftNavigation = [
   { name: "Home", href: "/" },
@@ -60,7 +61,7 @@ export function Navbar() {
               </Link>
             ))}
             <a
-              href="https://wa.me/2348067136381"
+              href={PHONE_CONTACTS[0].whatsapp}
               target="_blank"
               rel="noreferrer noopener"
               aria-label="Contact Elibless Managers on WhatsApp"
@@ -110,7 +111,7 @@ export function Navbar() {
           </Link>
 
           <a
-            href="https://wa.me/2348067136381"
+            href={PHONE_CONTACTS[0].whatsapp}
             target="_blank"
             rel="noreferrer noopener"
             aria-label="Contact Elibless Managers on WhatsApp"

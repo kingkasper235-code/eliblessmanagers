@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { PropertyCard } from "@/components/property-card";
 import { PropertyGallery } from "@/components/property-gallery";
+import { PHONE_CONTACTS } from "@/lib/contact";
 import { submitEnquiryAction } from "@/lib/enquiries";
 import { getProperties, getPropertyBySlug, getSimilarProperties } from "@/lib/properties";
 
@@ -151,9 +152,12 @@ export default async function PropertyDetailsPage({
             </div>
 
             <div className="mt-6 flex flex-col gap-3">
-              <a href="tel:+2348067136381" className="min-h-11 bg-[var(--brand-navy)] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)]">Call 08067136381</a>
-              <a href="https://wa.me/2348067136381" target="_blank" rel="noreferrer noopener" className="min-h-11 border border-[var(--brand-border)] bg-white px-5 py-3 text-center text-sm font-semibold text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">WhatsApp 08067136381</a>
-              <a href="https://wa.me/2347010466117" target="_blank" rel="noreferrer noopener" className="min-h-11 border border-[var(--brand-border)] bg-white px-5 py-3 text-center text-sm font-semibold text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">WhatsApp 07010466117</a>
+              {PHONE_CONTACTS.map((contact) => (
+                <div key={contact.display} className="grid grid-cols-2 gap-2">
+                  <a href={contact.tel} className="min-h-11 bg-[var(--brand-navy)] px-3 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)]">Call {contact.display}</a>
+                  <a href={contact.whatsapp} target="_blank" rel="noreferrer noopener" aria-label={`WhatsApp ${contact.display}`} className="min-h-11 border border-[var(--brand-border)] bg-white px-3 py-3 text-center text-sm font-semibold text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">WhatsApp</a>
+                </div>
+              ))}
               <Link href="/contact" className="min-h-11 bg-[var(--brand-navy)] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--brand-gold)] hover:text-[var(--brand-navy-dark)]">Contact agent</Link>
             </div>
           </aside>
@@ -240,8 +244,9 @@ export default async function PropertyDetailsPage({
           <h2 className="text-2xl font-semibold text-[var(--brand-navy)]">Property enquiry</h2>
           <div className="mt-4 flex flex-wrap gap-3 text-sm">
             <a href="mailto:Elibless123@gmail.com" className="border border-[var(--brand-border)] bg-[var(--brand-offwhite)] px-4 py-2 font-medium text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">Email us</a>
-            <a href="https://wa.me/2348067136381" target="_blank" rel="noreferrer noopener" className="border border-[var(--brand-border)] bg-[var(--brand-offwhite)] px-4 py-2 font-medium text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">WhatsApp 08067136381</a>
-            <a href="https://wa.me/2347010466117" target="_blank" rel="noreferrer noopener" className="border border-[var(--brand-border)] bg-[var(--brand-offwhite)] px-4 py-2 font-medium text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">WhatsApp 07010466117</a>
+            {PHONE_CONTACTS.map((contact) => (
+              <a key={contact.display} href={contact.whatsapp} target="_blank" rel="noreferrer noopener" className="border border-[var(--brand-border)] bg-[var(--brand-offwhite)] px-4 py-2 font-medium text-[var(--brand-navy)] transition hover:border-[var(--brand-gold)] hover:text-[var(--brand-gold)]">WhatsApp {contact.display}</a>
+            ))}
           </div>
           <form action={submitEnquiryAction} className="mt-6 grid gap-5 md:grid-cols-2">
             <input type="hidden" name="propertyId" value={String(property.id)} />
