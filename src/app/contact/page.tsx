@@ -59,6 +59,8 @@ export default async function ContactPage({
                   <p className="mt-2 flex flex-col gap-1">
                     <a href="tel:+2348067136381" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">08067136381</a>
                     <a href="tel:+2347010466117" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">07010466117</a>
+                    <a href="tel:+2348082130765" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">08082130765</a>
+                    <a href="tel:+2347063314698" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">07063314698</a>
                   </p>
                 </div>
                 <div>
@@ -68,6 +70,10 @@ export default async function ContactPage({
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">WhatsApp</p>
                   <a href="https://wa.me/2348067136381" target="_blank" rel="noreferrer noopener" className="mt-2 inline-block font-semibold text-white hover:text-[var(--brand-gold-light)]">Message our team ↗</a>
+                  <p className="mt-2 flex flex-col gap-1">
+                    <a href="https://wa.me/2348082130765" target="_blank" rel="noreferrer noopener" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">WhatsApp 08082130765 ↗</a>
+                    <a href="https://wa.me/2347063314698" target="_blank" rel="noreferrer noopener" className="w-fit font-semibold text-white hover:text-[var(--brand-gold-light)]">WhatsApp 07063314698 ↗</a>
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/55">Visit</p>
